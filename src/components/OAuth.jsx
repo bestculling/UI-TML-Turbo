@@ -9,6 +9,7 @@ export default function OAuth() {
     const { signInSuccess } = useStore();
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const endPoint = "https://beta-tml-turbo.onrender.com"
 
     const handleGoogleClick = async () => {
         setError('');
@@ -18,7 +19,7 @@ export default function OAuth() {
             const auth = getAuth(app);
 
             const result = await signInWithPopup(auth, provider);
-            const res = await fetch('https://beta-tml-turbo.onrender.com/api/auth/google', {
+            const res = await fetch(endPoint + '/api/auth/google', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

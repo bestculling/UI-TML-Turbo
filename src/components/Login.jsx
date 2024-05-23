@@ -38,19 +38,6 @@ function Login() {
                         <hr className="border-gray-400" />
                     </div>
                     <OAuth />
-                    {/* <button
-                        onClick={() => signIn("google")}
-                        className=" bg-white px-2 py-2 mt-5 border w-full rounded-xl 
-          flex justify-center items-center text-sm hover:scale-105 duration-300 text-[#002D74]"
-                    >
-                        <img
-                            src="/google-logo.png"
-                            width={30}
-                            height={30}
-                            alt="Google Logo"
-                        />
-                        <span className="px-2">เข้าสู่ระบบด้วย Google</span>
-                    </button> */}
 
                     <div className="mt-5 text-xs flex justify-between items-center">
                         <p className="text-gray-400">คุณยังไม่มีบัญชีใช่หรือไม่?</p>

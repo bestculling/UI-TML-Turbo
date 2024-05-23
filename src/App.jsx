@@ -5,6 +5,7 @@ import { useStore } from './store';
 import "./App.css";
 import Notification from './components/Notification';
 import ChatContainer from './components/ChatContainer';
+import { convertToFormattedString } from './lib/utils';
 
 function App() {
 
@@ -15,8 +16,8 @@ function App() {
     const [messages, setMessages] = useState([]);
     const { currentUser, conversations, setConversations } = useStore();
     const endRef = useRef(null);
-    const endPoint = "https://beta-tml-turbo.onrender.com/";
-    const dev = "http://localhost:3000/";
+    const apiUrl = import.meta.env.REACT_APP_API_ENDPOINT || "https://beta-tml-turbo.onrender.com/";
+    const MAX_CONVERSATION_HISTORY_LENGTH = 50; // Limit conversation history length
 
     useEffect(() => {
         if (currentUser && currentUser._id) {
@@ -26,7 +27,7 @@ function App() {
 
     const fetchConversations = async (userId) => {
         try {
-            const response = await fetch(endPoint + `api/conversations/${userId}`);
+            const response = await fetch(`${apiUrl}api/conversations/${userId}`);
             const data = await response.json();
             setConversations(data);
         } catch (error) {
@@ -37,7 +38,7 @@ function App() {
 
     useEffect(() => {
         endRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [messages]);
+    }, [prompt]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -45,7 +46,7 @@ function App() {
             return;
         }
 
-        if (!currentUser || !currentUser._id) {  // ตรวจสอบว่า currentUser และ userId มีอยู่
+        if (!currentUser || !currentUser._id) {
             setError(true);
             console.error('User not authenticated');
             return;
@@ -55,24 +56,9 @@ function App() {
         setPrompt('');
         setMessages([...messages, { user: prompt }]);
 
-        function convertToFormattedString(conversations) {
-            let result = "";
-
-            for (let i = 0; i < conversations.length; i++) {
-                const item = conversations[i];
-                result += `ประโยคที่ ${i + 1}\n ข้อความของฉัน: ${item.prompt}\nข้อความของคุณ: ${item.response}\n`;
-            }
-
-            return result;
-        }
-
-        console.log("conversations ", conversations)
-        const formattedString = convertToFormattedString(conversations);
-
-
         try {
-            console.log("Prompt", `${prompt}\n ${formattedString}`)
-            const apiResponse = await fetch(endPoint + 'api/generate', {
+            const formattedString = convertToFormattedString(conversations, MAX_CONVERSATION_HISTORY_LENGTH);
+            const apiResponse = await fetch(`${apiUrl}api/generate`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -89,13 +75,17 @@ function App() {
         } catch (error) {
             setError(true);
             console.error('Error fetching data:', error);
+            if (error.message.includes('Candidate was blocked due to SAFETY')) {
+                // Handle safety error gracefully
+                alert('Your prompt was blocked due to safety concerns. Please rephrase your request and avoid sensitive or inappropriate content.');
+            }
         } finally {
             setIsLoading(false);
         }
     };
 
     const displayUsername = () => {
-        const username = currentUser.email;
+        const username = currentUser?.email;
         if (!username) {
             return <p>Loading username...</p>;
         }

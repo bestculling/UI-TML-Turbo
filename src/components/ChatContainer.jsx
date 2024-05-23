@@ -2,8 +2,24 @@ import React from 'react';
 import Loading from './Loading';
 import MarkdownComponent from './MarkdownComponent';
 import { IoSend } from "react-icons/io5";
+import { useStore } from '../store';
 
 const ChatContainer = ({ messages, isLoading, prompt, handleSubmit, setPrompt, displayUsername, endRef, error }) => {
+
+    const { conversations } = useStore();
+
+    // ฟังก์ชันสำหรับแปลงข้อมูล
+    const transformData = (data) => {
+        return data.map(item => ({
+            id: item._id,
+            user: item.prompt,
+            tml: item.response
+        }));
+    };
+
+    const newArray = transformData(conversations);
+    newArray.reverse()
+
     return (
         <div className='relative overflow-scroll'>
             <div className="mb-24 chat-container">
@@ -18,6 +34,23 @@ const ChatContainer = ({ messages, isLoading, prompt, handleSubmit, setPrompt, d
                         บอกเลยว่าล้ำกว่านี้ก็...เส้นใยควอนตัมแล้วครับ! 😉
                     </div>
                 </div>
+                {
+                    newArray.map((e, i) => (
+                        <div key={i}>
+                            <div className="chat chat-end">
+                                <div className="chat-bubble"><div className='text-primary'>ประวัติบทสนทนาที่ {i}</div> {e.user}</div>
+                            </div>
+                            <div className="chat chat-start">
+                                <div className="chat-bubble">{e.tml}</div>
+                            </div>
+                        </div>
+                    ))
+                }
+                <div className="flex items-center w-full justify-center">
+                    <div className="flex-1 border-t border-gray-300"></div>
+                    <div className="mx-4">ข้อความล่าสุด</div>
+                    <div className="flex-1 border-t border-gray-300"></div>
+                </div>
                 {messages.map((msg, index) => (
                     <div key={index} className={`chat ${msg.tml ? 'chat-start' : 'chat-end'}`}>
                         {msg.user && <div className="text-white chat-bubble chat-bubble-primary">{msg.user}</div>}
@@ -29,7 +62,6 @@ const ChatContainer = ({ messages, isLoading, prompt, handleSubmit, setPrompt, d
                     </div>
                 ))}
             </div>
-            <div ref={endRef}></div>
             <form
                 onSubmit={handleSubmit}
                 className="bg-white dark:bg-[#1d232a] fixed bottom-0 left-0 right-0 flex flex-col space-y-4 mx-3"
@@ -52,6 +84,7 @@ const ChatContainer = ({ messages, isLoading, prompt, handleSubmit, setPrompt, d
                     </button>
                 </div>
             </form>
+            <div ref={endRef}></div>
             {isLoading && <Loading />}
         </div>
     );

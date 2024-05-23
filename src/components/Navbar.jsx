@@ -62,11 +62,11 @@ export default function Navbar() {
                                 <div className='w-full'>
                                     <div className='flex gap-5  items-center rounded-md text-gray-500 hover:bg-gray-900 p-3'>
                                         <CiChat1 />
-                                        แชทที่ 1
+                                        แชทกับ AI
                                     </div>
                                     <div className='flex gap-5 items-center rounded-md text-gray-500 hover:bg-gray-900 p-3'>
                                         <CiChat1 />
-                                        แชทที่ 2
+                                        Extension
                                     </div>
                                 </div>
                                 <hr />

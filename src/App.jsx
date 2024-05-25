@@ -10,6 +10,9 @@ import { getApiUrl } from './lib/utils'
 
 function App() {
 
+    console.log("status: ", import.meta.env.MODE)
+    console.log("api check: ", getApiUrl())
+
     const [error, setError] = useState(false);
     const [prompt, setPrompt] = useState('');
     const [response, setResponse] = useState('');
@@ -20,7 +23,6 @@ function App() {
     const MAX_CONVERSATION_HISTORY_LENGTH = 10; // Limit conversation history length
 
     useEffect(() => {
-        console.log("status: ", import.meta.env.MODE)
         if (currentUser && currentUser._id) {
             fetchConversations(currentUser._id);
         }

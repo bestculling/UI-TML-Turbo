@@ -3,13 +3,13 @@ import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 import { app } from '../lib/firebase'
 import { useStore } from '../store'
 import { toast } from "react-toastify";
+import { getApiUrl } from "../lib/utils"
 
 export default function OAuth() {
 
     const { signInSuccess } = useStore();
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const endPoint = "https://beta-tml-turbo.onrender.com"
 
     const handleGoogleClick = async () => {
         setError('');
@@ -17,9 +17,9 @@ export default function OAuth() {
         try {
             const provider = new GoogleAuthProvider();
             const auth = getAuth(app);
-
             const result = await signInWithPopup(auth, provider);
-            const res = await fetch(endPoint + '/api/auth/google', {
+            const url = `${getApiUrl()}api/auth/google`
+            const res = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

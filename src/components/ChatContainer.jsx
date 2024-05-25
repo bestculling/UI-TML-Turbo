@@ -41,7 +41,9 @@ const ChatContainer = ({ messages, isLoading, prompt, handleSubmit, setPrompt, d
                                 <div className="chat-bubble"><div className='text-primary'>ประวัติบทสนทนาที่ {i}</div> {e.user}</div>
                             </div>
                             <div className="chat chat-start">
-                                <div className="chat-bubble">{e.tml}</div>
+                                <div className="chat-bubble">
+                                    <MarkdownComponent content={e.tml} />
+                                </div>
                             </div>
                         </div>
                     ))

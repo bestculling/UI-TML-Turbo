@@ -2,6 +2,8 @@ import { useStore } from '../store'
 import { MdLogout } from "react-icons/md";
 import { CiChat1 } from "react-icons/ci";
 import { FaPen } from "react-icons/fa";
+import { toast } from "react-toastify";
+import { getApiUrl } from "../lib/utils"
 
 export default function Navbar() {
 
@@ -9,9 +11,11 @@ export default function Navbar() {
     const signout = useStore((state) => state.signout);
 
     const handleSignOut = async () => {
+        const url = `${getApiUrl()}api/auth/signout`
         try {
-            await fetch('https://beta-tml-turbo.onrender.com/api/auth/signout');
+            await fetch(url);
             signout()
+            toast.error("คุณออกจากระบบแล้ว!")
         } catch (error) {
             console.log(error);
         }

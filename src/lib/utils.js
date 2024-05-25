@@ -7,3 +7,13 @@ export function convertToFormattedString(conversations, limit = 50) {
     }
     return result;
 }
+
+export function getApiUrl() {
+    let apiUrl = "";
+    if (import.meta.env.MODE == 'development') {
+        apiUrl = import.meta.env.VITE_LOCAL_API;
+    } else {
+        apiUrl = import.meta.env.VITE_DEPLOY_API;
+    }
+    return apiUrl;
+}

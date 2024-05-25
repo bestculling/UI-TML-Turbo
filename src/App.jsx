@@ -6,7 +6,7 @@ import "./App.css";
 import Notification from './components/Notification';
 import ChatContainer from './components/ChatContainer';
 import { convertToFormattedString } from './lib/utils';
-// import SpeechRecognitionComponent from './components/SpeechRecognitionComponent';
+import { getApiUrl } from './lib/utils'
 
 function App() {
 
@@ -17,8 +17,7 @@ function App() {
     const [messages, setMessages] = useState([]);
     const { currentUser, conversations, setConversations } = useStore();
     const endRef = useRef(null);
-    const apiUrl = import.meta.env.REACT_APP_API_ENDPOINT || "https://beta-tml-turbo.onrender.com/";
-    const MAX_CONVERSATION_HISTORY_LENGTH = 50; // Limit conversation history length
+    const MAX_CONVERSATION_HISTORY_LENGTH = 10; // Limit conversation history length
 
     useEffect(() => {
         if (currentUser && currentUser._id) {
@@ -27,8 +26,9 @@ function App() {
     }, [currentUser]);
 
     const fetchConversations = async (userId) => {
+        const url = `${getApiUrl()}api/conversations/${userId}`
         try {
-            const response = await fetch(`${apiUrl}api/conversations/${userId}`);
+            const response = await fetch(url);
             const data = await response.json();
             setConversations(data);
         } catch (error) {
@@ -59,15 +59,17 @@ function App() {
 
         try {
             const formattedString = convertToFormattedString(conversations, MAX_CONVERSATION_HISTORY_LENGTH);
-            const apiResponse = await fetch(`${apiUrl}api/generate`, {
+            const finalPrompt = `${formattedString}\n ${prompt}\n`
+            const url = `${getApiUrl()}api/newGenerate`
+            const apiResponse = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    prompt: `${formattedString}\n ${prompt}\n`,
-                    single: prompt,
-                    userId: currentUser._id
+                    prompt: finalPrompt,
+                    // single: prompt,
+                    // userId: currentUser._id
                 }),
             });
             const data = await apiResponse.json();

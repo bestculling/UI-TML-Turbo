@@ -61,9 +61,11 @@ function App() {
         setMessages([...messages, { user: prompt }]);
 
         try {
-            const formattedString = convertToFormattedString(conversations, MAX_CONVERSATION_HISTORY_LENGTH);
-            const finalPrompt = `${formattedString}\n ${prompt}\n`
+            // const formattedString = convertToFormattedString(conversations, MAX_CONVERSATION_HISTORY_LENGTH);
+            // const finalPrompt = `${formattedString}\n ${prompt}\n`
+            const finalPrompt = prompt
             const url = `${getApiUrl()}api/newGenerate`
+            console.log(finalPrompt)
             const apiResponse = await fetch(url, {
                 method: 'POST',
                 headers: {

@@ -5,7 +5,6 @@ import { useStore } from './store';
 import "./App.css";
 import Notification from './components/Notification';
 import ChatContainer from './components/ChatContainer';
-import { convertToFormattedString } from './lib/utils';
 import { getApiUrl } from './lib/utils'
 
 function App() {
@@ -17,7 +16,6 @@ function App() {
     const [messages, setMessages] = useState([]);
     const { currentUser, conversations, setConversations } = useStore();
     const endRef = useRef(null);
-    const MAX_CONVERSATION_HISTORY_LENGTH = 10; // Limit conversation history length
 
     useEffect(() => {
         console.log("status: ", import.meta.env.MODE)
@@ -60,8 +58,6 @@ function App() {
         setMessages([...messages, { user: prompt }]);
 
         try {
-            // const formattedString = convertToFormattedString(conversations, MAX_CONVERSATION_HISTORY_LENGTH);
-            // const finalPrompt = `${formattedString}\n ${prompt}\n`
             const finalPrompt = prompt
             const url = `${getApiUrl()}api/newGenerate`
             console.log(finalPrompt)
@@ -72,7 +68,6 @@ function App() {
                 },
                 body: JSON.stringify({
                     prompt: finalPrompt,
-                    // single: prompt,
                     userId: currentUser._id
                 }),
             });

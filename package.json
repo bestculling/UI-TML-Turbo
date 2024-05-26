@@ -9,6 +9,7 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
+  "proxy": "https://beta-tml-turbo.onrender.com",
   "dependencies": {
     "daisyui": "^4.11.1",
     "firebase": "^10.12.0",

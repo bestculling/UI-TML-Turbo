@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
-import { app } from '../lib/firebase'
-import { useStore } from '../store'
-import { toast } from "react-toastify";
-import { getApiUrl } from "../lib/utils"
+import { app } from '../lib/firebase';
+import { useStore } from '../store';
+import { toast } from 'react-toastify';
+import { getApiUrl } from '../lib/utils';
 
 export default function OAuth() {
-
     const { signInSuccess } = useStore();
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +17,7 @@ export default function OAuth() {
             const provider = new GoogleAuthProvider();
             const auth = getAuth(app);
             const result = await signInWithPopup(auth, provider);
-            const url = `${getApiUrl()}api/auth/google`
+            const url = `${getApiUrl()}api/auth/google`;
             const res = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -31,19 +30,28 @@ export default function OAuth() {
                 }),
             });
             const data = await res.json();
-            toast.success("เข้าสู่ระบบสำเร็จ!")
-            signInSuccess(data)
+            toast.success('เข้าสู่ระบบสำเร็จ!');
+            signInSuccess(data);
         } catch (error) {
-            console.log(error)
-            toast.error(err.message)
+            console.log(error);
+            toast.error(error.message);
         } finally {
             setIsLoading(false);
         }
     };
+
     return (
         <div>
             {isLoading ? (
-                <div className="loading">Loading...</div>
+                // Loading State สุดเท่  ✨
+                <button
+                    type="button"
+                    className="bg-white px-2 py-2 mt-5 border w-full rounded-xl flex justify-center items-center text-sm opacity-70 cursor-not-allowed"
+                    disabled
+                >
+                    <img src="/google-logo.png" width={30} height={30} alt="Google Logo" className="animate-spin" />{' '}
+                    <span className="px-2">กำลังเข้าสู่ระบบ...</span>
+                </button>
             ) : (
                 <button
                     type="button"

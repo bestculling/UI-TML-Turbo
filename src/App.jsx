@@ -8,8 +8,7 @@ import ChatContainer from './components/ChatContainer';
 import { getApiUrl } from './lib/utils'
 
 function App() {
-
-    const [error, setError] = useState(false);
+    const [error, setError] = useState(null);
     const [prompt, setPrompt] = useState('');
     const [response, setResponse] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -32,35 +31,36 @@ function App() {
             const data = await response.json();
             setConversations(data);
         } catch (error) {
-            setError(true);
+            setError('เกิดข้อผิดพลาดในการดึงข้อมูลการสนทนา');
             console.error('Error fetching conversations:', error);
         }
     };
 
     useEffect(() => {
         endRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [prompt]);
+    }, [messages]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (prompt.length < 1) {
+        if (prompt.trim() === '') {
+            setError('กรุณาพิมพ์ข้อความ');
             return;
         }
 
         if (!currentUser || !currentUser._id) {
-            setError(true);
-            console.error('User not authenticated');
+            setError('กรุณาเข้าสู่ระบบ');
             return;
         }
 
         setIsLoading(true);
-        setPrompt('');
+        setError(null);
         setMessages([...messages, { user: prompt }]);
+        setPrompt('');
 
         try {
             const finalPrompt = prompt
             const url = `${getApiUrl()}api/newGenerate`
-            console.log(finalPrompt)
+
             const apiResponse = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -71,33 +71,36 @@ function App() {
                     userId: currentUser._id
                 }),
             });
+
+            if (!apiResponse.ok) {
+                throw new Error(`HTTP error! status: ${apiResponse.status}`);
+            }
+
             const data = await apiResponse.json();
             setResponse(data.response);
             setMessages([...messages, { user: prompt }, { tml: data.response }]);
+
         } catch (error) {
-            setError(true);
             console.error('Error fetching data:', error);
             if (error.message.includes('Candidate was blocked due to SAFETY')) {
-                // Handle safety error gracefully
-                alert('Your prompt was blocked due to safety concerns. Please rephrase your request and avoid sensitive or inappropriate content.');
+                setError('ข้อความของคุณถูกบล็อกเนื่องจากปัญหาด้านความปลอดภัย โปรดลองพิมพ์ใหม่');
+            } else {
+                setError('เกิดข้อผิดพลาดในการส่งข้อความ');
             }
         } finally {
             setIsLoading(false);
         }
     };
 
+
     const displayUsername = () => {
         const username = currentUser?.email;
         if (!username) {
-            return <p>Loading username...</p>;
+            return <p>กำลังโหลดชื่อผู้ใช้...</p>;
         }
         const regex = /^(.*?)@gmail.com$/;
         const match = username.match(regex);
-        if (match) {
-            return match[1];
-        } else {
-            return <p>Invalid email format</p>;
-        }
+        return match ? match[1] : <p>รูปแบบอีเมลไม่ถูกต้อง</p>;
     };
 
     return (
@@ -123,7 +126,7 @@ function App() {
                     </div>
                 </div>
             </div>
-            <Notification />
+            {error && <Notification message={error} />}
         </div>
     );
 }

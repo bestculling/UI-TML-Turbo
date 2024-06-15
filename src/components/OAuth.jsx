@@ -29,6 +29,7 @@ export default function OAuth() {
                     photo: result.user.photoURL,
                 }),
             });
+
             const data = await res.json();
             toast.success('เข้าสู่ระบบสำเร็จ!');
             signInSuccess(data);

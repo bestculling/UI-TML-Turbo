@@ -22,7 +22,7 @@ function App() {
         if (currentUser && currentUser._id) {
             fetchConversations(currentUser._id);
         }
-    }, [currentUser]);
+    }, [prompt, messages]);
 
     const fetchConversations = async (userId) => {
         const url = `${getApiUrl()}api/conversations/${userId}`
@@ -82,11 +82,7 @@ function App() {
 
         } catch (error) {
             console.error('Error fetching data:', error);
-            if (error.message.includes('Candidate was blocked due to SAFETY')) {
-                setError('ข้อความของคุณถูกบล็อกเนื่องจากปัญหาด้านความปลอดภัย โปรดลองพิมพ์ใหม่');
-            } else {
-                setError('เกิดข้อผิดพลาดในการส่งข้อความ');
-            }
+            setMessages([...messages, { user: prompt }, { tml: "เกิดข้อผิดพลาดขณะประมวลผลคำขอของคุณ กรุณาลองใหม่อีกครั้ง" }]);
         } finally {
             setIsLoading(false);
         }
@@ -126,6 +122,7 @@ function App() {
                     </div>
                 </div>
             </div>
+            <Notification />
             {error && <Notification message={error} />}
         </div>
     );

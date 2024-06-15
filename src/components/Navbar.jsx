@@ -1,9 +1,9 @@
 import { useStore } from '../store';
 import { MdLogout } from 'react-icons/md';
 import { CiChat1 } from 'react-icons/ci';
-import { FaPen } from 'react-icons/fa';
+import { RiDeleteBin6Fill } from "react-icons/ri";
 import { toast } from 'react-toastify';
-import { getApiUrl } from '../lib/utils'; // แก้ path  ตามโครงสร้าง  folder 
+import { getApiUrl } from '../lib/utils';
 import MenuItem from './MenuItem';
 
 export default function Navbar() {
@@ -21,6 +21,33 @@ export default function Navbar() {
     }
   };
 
+  const handleDeleteConversations = async () => {
+    if (!currentUser) {
+      toast.error('คุณต้องเข้าสู่ระบบก่อน!');
+      return;
+    }
+
+    const url = `${getApiUrl()}api/conversations/${currentUser._id}`;
+
+    try {
+      const response = await fetch(url, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        toast.success('ลบการสนทนาทั้งหมดเรียบร้อยแล้ว!');
+        // Reload the page
+        window.location.reload();
+      } else {
+        const errorData = await response.json();
+        toast.error(`เกิดข้อผิดพลาด: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error('เกิดข้อผิดพลาดในการลบการสนทนา.');
+    }
+  };
+
   return (
     <div className="flex p-3 shadow overflow-hidden">
       {/* Logo  และ  ชื่อ */}
@@ -29,15 +56,15 @@ export default function Navbar() {
           <div className="hidden sm:block">
             <img src="/Logo.png" alt="logo" className="h-9 w-9" />
           </div>
-          <div className="font-bold">TML1-Turbo</div>
+          <div className="font-bold">TLM</div>
         </div>
       </div>
 
       {/* ส่วนของ  User  ที่  Login */}
       {currentUser && (
         <div className="flex gap-5 w-12 drawer z-10">
-          <button className="btn btn-circle">
-            <FaPen />
+          <button className="btn btn-circle" onClick={handleDeleteConversations}>
+            <RiDeleteBin6Fill />
           </button>
 
           <input id="my-drawer" type="checkbox" className="drawer-toggle" />
@@ -61,7 +88,7 @@ export default function Navbar() {
               <MenuItem>เมนู</MenuItem>
               <div className="w-full">
                 <MenuItem icon={CiChat1}>แชทกับ AI</MenuItem>
-                <MenuItem icon={CiChat1}>Extension</MenuItem>
+                <MenuItem icon={CiChat1}>สอบถามโค้ดของคุณ</MenuItem>
               </div>
               <hr />
               <MenuItem icon={MdLogout} onClick={handleSignOut}>

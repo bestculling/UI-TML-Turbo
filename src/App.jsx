@@ -22,7 +22,7 @@ function App() {
         if (currentUser && currentUser._id) {
             fetchConversations(currentUser._id);
         }
-    }, [prompt, messages]);
+    }, []);
 
     const fetchConversations = async (userId) => {
         const url = `${getApiUrl()}api/conversations/${userId}`
@@ -100,7 +100,7 @@ function App() {
     };
 
     return (
-        <div className="flex flex-col h-screen w-screen overflow-scroll">
+        <div className="flex flex-col h-screen w-screen overflow-scroll bg-[#0e0e0f]">
             <Navbar />
             <div className="flex h-full overflow-scroll">
                 <div className="flex-1">

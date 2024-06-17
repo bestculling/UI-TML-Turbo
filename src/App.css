@@ -30,3 +30,7 @@
     transform: translateY(-0.5rem);
   }
 }
+
+.rounded-full {
+  object-fit: cover; /* หรือ object-fit: contain ก็ได้ */
+}

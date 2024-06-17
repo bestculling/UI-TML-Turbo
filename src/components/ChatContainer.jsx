@@ -30,7 +30,7 @@ const ChatContainer = ({ messages, isLoading, prompt, handleSubmit, setPrompt, d
                         <span className='font-bold text-primary'>{displayUsername()}</span> {' '}
                         แหม.. บอกเลยว่าวันนี้คุณดูดีมากกกก! 🤩  เหมือนเพิ่งผ่านวงจร  Machine Learning  มาใหม่ๆ เลย 😉
                         ผม{' '}
-                        <span className='font-bold text-secondary'>TLM AI</span> สุดฮาประจำ TouchmyLike Co., Ltd.
+                        <span className='font-bold text-secondary'>TLM AI</span> สุดฮา
                         พร้อมแล้วที่จะมอบความรู้ด้านเทคโนโลยี การเขียนโปรแกรม และแน่นอน! มุขตลกสุดฮาแบบไม่มีใครเกิน!  🎉
                         ว่าแต่วันนี้มีอะไรให้ผมรับใช้ครับ?  🤖
                     </div>
@@ -68,14 +68,14 @@ const ChatContainer = ({ messages, isLoading, prompt, handleSubmit, setPrompt, d
             </div>
             <form
                 onSubmit={handleSubmit}
-                className="bg-white dark:bg-[#1d232a] fixed bottom-0 left-0 right-0 flex flex-col space-y-4 mx-3"
+                className="bg-white dark:bg-[#0e0e0f] fixed bottom-0 left-0 right-0 flex flex-col space-y-4 mx-3"
             >
                 <div className="flex justify-center items-center">
                     <textarea
                         id="prompt"
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
-                        className="dark:bg-[#1d232a] my-4 py-3 px-2 w-full border rounded-3xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                        className="dark:bg-[#1e1f20] my-4 py-3 px-2 w-full border rounded-3xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                         placeholder='Aa'
                         rows="1"
                     />

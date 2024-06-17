@@ -5,6 +5,7 @@ import { RiDeleteBin6Fill } from "react-icons/ri";
 import { toast } from 'react-toastify';
 import { getApiUrl } from '../lib/utils';
 import MenuItem from './MenuItem';
+import { IoMenu } from "react-icons/io5";
 
 export default function Navbar() {
   const { currentUser } = useStore();
@@ -49,52 +50,72 @@ export default function Navbar() {
   };
 
   return (
-    <div className="flex p-3 shadow overflow-hidden">
-      {/* Logo  และ  ชื่อ */}
-      <div className="flex items-center pr-[80px]">
-        <div className="flex cursor-pointer items-center gap-2 text-2xl">
-          <div className="hidden sm:block">
-            <img src="/Logo.png" alt="logo" className="h-9 w-9" />
-          </div>
-          <div className="font-bold">TLM</div>
-        </div>
-      </div>
-
-      {/* ส่วนของ  User  ที่  Login */}
-      {currentUser && (
-        <div className="flex gap-5 w-12 drawer z-10">
-          <button className="btn btn-circle" onClick={handleDeleteConversations}>
-            <RiDeleteBin6Fill />
-          </button>
-
+    <div className='drawer z-10 w-full p-3 shadow overflow-hidden flex justify-between items-center'>
+      <div className='flex'>
+        {currentUser && (<div>
           <input id="my-drawer" type="checkbox" className="drawer-toggle" />
           <div className="drawer-content">
-            {/* ปุ่ม  Hamburger  Menu */}
-            <label htmlFor="my-drawer" className="btn btn-circle swap swap-rotate drawer-button">
-              <input type="checkbox" />
-              <svg className="swap-off fill-current" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 512 512">
-                <path d="M64,384H448V341.33H64Zm0-106.67H448V234.67H64ZM64,128v42.67H448V128Z" />
-              </svg>
-              <svg className="swap-on fill-current" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 512 512">
-                <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
-              </svg>
+            <label htmlFor="my-drawer" className="">
+              <div className='text-white text-2xl btn bg-[#0e0e0f] border-none active:bg-[#1e1f20]'>
+                <IoMenu />
+              </div>
             </label>
           </div>
-
-          {/*  Sidebar  Menu */}
           <div className="drawer-side">
             <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
-            <div className="flex flex-col gap-5 p-4 w-80 min-h-full bg-base-200">
-              <MenuItem>เมนู</MenuItem>
-              <div className="w-full">
-                <MenuItem icon={CiChat1}>แชทกับ AI</MenuItem>
-                <MenuItem icon={CiChat1}>สอบถามโค้ดของคุณ</MenuItem>
+            <div className="h-full flex flex-col gap-5 p-4 w-80 min-h-full bg-[#1e1f20]">
+              <MenuItem><span className='text-white'>เมนู</span></MenuItem>
+              <div className='h-full flex flex-col justify-between'>
+                <div className="w-full">
+                  <MenuItem icon={CiChat1}>แชทกับ AI</MenuItem>
+                  {/* <MenuItem icon={CiChat1}>สอบถามโค้ดของคุณ</MenuItem> */}
+                </div>
+                <div>
+                  <MenuItem icon={MdLogout} onClick={handleSignOut}>
+                    ออกจากระบบ
+                  </MenuItem>
+                </div>
               </div>
-              <hr />
-              <MenuItem icon={MdLogout} onClick={handleSignOut}>
-                ออกจากระบบ
-              </MenuItem>
             </div>
+          </div>
+        </div>)}
+
+        <div className="flex items-center mr-5">
+          <div className="flex cursor-pointer items-center gap-2 text-2xl">
+            <div className="hidden sm:block">
+              <img src="/Logo.png" alt="logo" className="h-9 w-9" />
+            </div>
+            <div className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-violet-500">TLM</div>
+          </div>
+        </div>
+
+        {currentUser && (<div className='flex items-center mr-5'>
+          <div onClick={() => document.getElementById('my_modal_1').showModal()} className='text-gray-300 text-lg bg-[#1e1f20] p-3 rounded-full hover:cursor-pointer'>
+            <RiDeleteBin6Fill />
+          </div>
+          <dialog id="my_modal_1" className="modal">
+            <div className="modal-box">
+              <h3 className="font-bold text-lg">ลบประวัติการสนทนา</h3>
+              <p className="py-4">คุณต้องการลบประวัติการสนทนาทั้งหมดหรือไม่?</p>
+              <div className="modal-action">
+                <form method="dialog">
+                  {/* if there is a button in form, it will close the modal */}
+                  <div className='flex gap-5'>
+                    <button className="btn btn-primary" onClick={handleDeleteConversations}>ตกลง</button>
+                    <button className="btn">ยกเลิก</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </dialog>
+        </div>)}
+      </div>
+
+
+      {currentUser && (
+        <div className="flex mr-2">
+          <div className="bg-gradient-to-r from-red-500 to-violet-500 w-10 h-10 flex justify-center items-center rounded-full">
+            <img className="rounded-full p-1" src={currentUser.profilePicture} />
           </div>
         </div>
       )}

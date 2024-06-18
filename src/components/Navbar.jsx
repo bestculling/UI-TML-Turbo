@@ -1,11 +1,14 @@
 import { useStore } from '../store';
 import { MdLogout } from 'react-icons/md';
-import { CiChat1 } from 'react-icons/ci';
+import { IoIosChatboxes } from "react-icons/io";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import { toast } from 'react-toastify';
 import { getApiUrl } from '../lib/utils';
 import MenuItem from './MenuItem';
 import { IoMenu } from "react-icons/io5";
+import { FaFilePdf } from "react-icons/fa6";
+import { FaFileUpload } from "react-icons/fa";
+import { FaBook } from "react-icons/fa";
 
 export default function Navbar() {
   const { currentUser } = useStore();
@@ -64,13 +67,30 @@ export default function Navbar() {
           <div className="drawer-side">
             <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
             <div className="h-full flex flex-col gap-5 p-4 w-80 min-h-full bg-[#1e1f20]">
+              <div className='flex gap-5 items-center'>
+                <div className="bg-gradient-to-r from-red-500 to-violet-500 w-14 h-14 flex justify-center items-center rounded-full">
+                  <img className="rounded-full p-1" src={currentUser.profilePicture} />
+                </div>
+                <div className='flex flex-col'>
+                  <div className='text-white'>
+                    {currentUser.username}
+                  </div>
+                  <div>
+                    {currentUser.email}
+                  </div>
+                </div>
+              </div>
               <MenuItem><span className='text-white'>เมนู</span></MenuItem>
               <div className='h-full flex flex-col justify-between'>
                 <div className="w-full">
-                  <MenuItem icon={CiChat1}>แชทกับ AI</MenuItem>
-                  {/* <MenuItem icon={CiChat1}>สอบถามโค้ดของคุณ</MenuItem> */}
+                  <MenuItem icon={IoIosChatboxes}>แชทกับ AI</MenuItem>
+                  {/* <MenuItem icon={FaFilePdf}>สรุปเอกสาร PDF</MenuItem>
+                  <MenuItem icon={FaFileUpload}>ไฟล์ upload</MenuItem> */}
                 </div>
                 <div>
+                <MenuItem icon={FaBook}>
+                    อัพเดต
+                  </MenuItem>
                   <MenuItem icon={MdLogout} onClick={handleSignOut}>
                     ออกจากระบบ
                   </MenuItem>

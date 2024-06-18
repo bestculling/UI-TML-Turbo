@@ -13,7 +13,9 @@ function App() {
     const [response, setResponse] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [messages, setMessages] = useState([]);
+    const [showImage, setShowImage] = useState(false)
     const { currentUser, conversations, setConversations } = useStore();
+    const [base64Image, setBase64Image] = useState('');
     const endRef = useRef(null);
 
     useEffect(() => {
@@ -47,6 +49,15 @@ function App() {
             return;
         }
 
+        if (prompt.includes('@image')) {
+            const parts = prompt.split("@image");
+            const result = parts.slice(1).join('');
+            setResponse("แสดงผลรูปภาพ");
+            setMessages([...messages, { user: prompt }, { tml: result }]);
+            setPrompt('');
+            return
+        }
+
         if (!currentUser || !currentUser._id) {
             setError('กรุณาเข้าสู่ระบบ');
             return;
@@ -59,17 +70,16 @@ function App() {
 
         try {
             const finalPrompt = prompt
-            const url = `${getApiUrl()}api/newGenerate`
+            const url = base64Image === '' ? `${getApiUrl()}api/newGenerate` : `${getApiUrl()}api/newGenerateTextFromImage`
+
+            const formData = new FormData();
+            formData.append('prompt', finalPrompt);
+            formData.append('userId', currentUser._id);
+            formData.append('image', base64Image);
 
             const apiResponse = await fetch(url, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    prompt: finalPrompt,
-                    userId: currentUser._id
-                }),
+                body: formData
             });
 
             if (!apiResponse.ok) {
@@ -79,6 +89,7 @@ function App() {
             const data = await apiResponse.json();
             setResponse(data.response);
             setMessages([...messages, { user: prompt }, { tml: data.response }]);
+            setBase64Image('')
 
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -115,6 +126,9 @@ function App() {
                                 displayUsername={displayUsername}
                                 endRef={endRef}
                                 error={error}
+                                setShowImage={setShowImage}
+                                base64Image={base64Image}
+                                setBase64Image={setBase64Image}
                             />
                         ) : (
                             <Login />

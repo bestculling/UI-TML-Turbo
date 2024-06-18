@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import Loading from './Loading';
 import MarkdownComponent from './MarkdownComponent';
 import { IoSend } from "react-icons/io5";
 import { useStore } from '../store';
+import { FiPlusCircle } from "react-icons/fi";
 
-const ChatContainer = ({ messages, isLoading, prompt, handleSubmit, setPrompt, displayUsername, endRef, error }) => {
+const ChatContainer = ({ messages, isLoading, prompt, handleSubmit, setPrompt, displayUsername, endRef, setShowImage, base64Image, setBase64Image }) => {
 
     const { conversations } = useStore();
+
+    const [isLoadingImage, setIsLoadingImage] = useState(false);
+    const fileInputRef = useRef(null);
 
     // ฟังก์ชันสำหรับแปลงข้อมูล
     const transformData = (data) => {
@@ -19,6 +23,16 @@ const ChatContainer = ({ messages, isLoading, prompt, handleSubmit, setPrompt, d
 
     const newArray = transformData(conversations);
     newArray.reverse()
+
+    const handleImageUpload = (event) => {
+        setIsLoadingImage(true); // เริ่ม animation เมื่อเริ่มอัปโหลด
+        setBase64Image(event.target.files[0]);
+        setIsLoadingImage(false); // หยุด animation เมื่ออัปโหลดเสร็จ
+    };
+
+    const handleButtonClick = () => {
+        fileInputRef.current.click(); // เรียกการคลิกที่ input file ที่ซ่อนอยู่
+    };
 
     return (
         <div className='relative overflow-scroll'>
@@ -35,7 +49,6 @@ const ChatContainer = ({ messages, isLoading, prompt, handleSubmit, setPrompt, d
                         ว่าแต่วันนี้มีอะไรให้ผมรับใช้ครับ?  🤖
                     </div>
                 </div>
-
                 {
                     newArray.map((e, i) => (
                         <div key={i}>
@@ -57,35 +70,66 @@ const ChatContainer = ({ messages, isLoading, prompt, handleSubmit, setPrompt, d
                 </div>
                 {messages.map((msg, index) => (
                     <div key={index} className={`chat ${msg.tml ? 'chat-start' : 'chat-end'}`}>
-                        {msg.user && <div className="text-white chat-bubble chat-bubble-primary">{msg.user}</div>}
+                        {msg.user && <div className="text-white chat-bubble chat-bubble-primary overflow-scroll">{msg.user}</div>}
                         {msg.tml && (
                             <div className="bg-gray-100 text-gray-500 shadow-md chat-bubble">
-                                <MarkdownComponent content={msg.tml} />
+                                {
+                                    msg.tml.includes('http') ? (
+                                        <div className='w-fll'>
+                                            <img className='rounded-md' src={msg.tml} />
+                                        </div>)
+                                        : (
+                                            <MarkdownComponent content={msg.tml} />
+                                        )
+                                }
                             </div>
                         )}
                     </div>
                 ))}
+                {isLoadingImage && (
+                    <div className="flex items-center justify-center h-12 w-12 rounded-full border-4 border-t-transparent border-blue-500 animate-spin"></div>
+                )}
+                {!isLoadingImage && base64Image && (
+                    <div className='chat chat-end'>
+                        <div className="text-white chat-bubble chat-bubble-primary overflow-scroll">
+                            <img src={base64Image} alt="Upload success" />
+                        </div>
+                    </div>
+                )}
             </div>
             <form
                 onSubmit={handleSubmit}
                 className="bg-white dark:bg-[#0e0e0f] fixed bottom-0 left-0 right-0 flex flex-col space-y-4 mx-3"
             >
-                <div className="flex justify-center items-center">
-                    <textarea
-                        id="prompt"
-                        value={prompt}
-                        onChange={(e) => setPrompt(e.target.value)}
-                        className="dark:bg-[#1e1f20] my-4 py-3 px-2 w-full border rounded-3xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                        placeholder='Aa'
-                        rows="1"
-                    />
-                    <button
-                        type="submit"
-                        className="dark:bg-blue-500 dark:text-white mx-5 btn btn-active btn-neutral"
-                        disabled={isLoading}
-                    >
-                        <IoSend />
-                    </button>
+                <div className="flex items-center">
+                    <div className='flex flex-1 mr-2'>
+                        <textarea
+                            id="prompt"
+                            value={prompt}
+                            onChange={(e) => setPrompt(e.target.value)}
+                            className="dark:bg-[#1e1f20] my-4 py-3 px-2 w-full border rounded-3xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder='Aa'
+                            rows="1"
+                        />
+                    </div>
+                    <div className='flex flex-0 gap-3'>
+                        <button onClick={handleButtonClick} className="btn btn-active dark:bg-blue-500 dark:text-white">
+                            <FiPlusCircle className="w-5 h-5" />
+                        </button>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleImageUpload}
+                            className="hidden" // ซ่อน input file
+                        />
+                        <button
+                            type="submit"
+                            className="dark:bg-blue-500 dark:text-white btn btn-active btn-neutral"
+                            disabled={isLoading}
+                        >
+                            <IoSend />
+                        </button>
+                    </div>
                 </div>
             </form>
             <div ref={endRef}></div>

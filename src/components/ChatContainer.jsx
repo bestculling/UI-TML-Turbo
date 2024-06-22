@@ -4,13 +4,17 @@ import MarkdownComponent from './MarkdownComponent';
 import { IoSend } from "react-icons/io5";
 import { useStore } from '../store';
 import { FiPlusCircle } from "react-icons/fi";
+import TextToSpeech from './TextToSpeech';
+import './Chat.css'
 
-const ChatContainer = ({ messages, isLoading, prompt, handleSubmit, setPrompt, displayUsername, endRef, setShowImage, base64Image, setBase64Image }) => {
+
+const ChatContainer = ({ messages, isLoading, prompt, handleSubmit, setPrompt, displayUsername, endRef, base64Image, setBase64Image }) => {
 
     const { conversations } = useStore();
 
     const [isLoadingImage, setIsLoadingImage] = useState(false);
     const fileInputRef = useRef(null);
+    const [showImage, setShowImage] = useState(null)
 
     // ฟังก์ชันสำหรับแปลงข้อมูล
     const transformData = (data) => {
@@ -25,13 +29,37 @@ const ChatContainer = ({ messages, isLoading, prompt, handleSubmit, setPrompt, d
     newArray.reverse()
 
     const handleImageUpload = (event) => {
+        const file = event.target.files[0]
         setIsLoadingImage(true); // เริ่ม animation เมื่อเริ่มอัปโหลด
-        setBase64Image(event.target.files[0]);
+        setBase64Image(file);
         setIsLoadingImage(false); // หยุด animation เมื่ออัปโหลดเสร็จ
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setShowImage(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     const handleButtonClick = () => {
         fileInputRef.current.click(); // เรียกการคลิกที่ input file ที่ซ่อนอยู่
+    };
+
+    const [isSpeaking, setIsSpeaking] = useState(false);
+    const [currentSpeakingIndex, setCurrentSpeakingIndex] = useState(null);
+    const [currentAudioUrl, setCurrentAudioUrl] = useState(null); // เพิ่ม state setCurrentAudioUrl
+    const [audioRef, setAudioRef] = useState(null); // สร้าง state audioRef
+
+    const handleSpeakClick = (index) => {
+        setCurrentSpeakingIndex(index);
+        setIsSpeaking(true);
+
+        // หยุดเสียงเดิมก่อนเล่นเสียงใหม่
+        if (audioRef) {
+            audioRef.pause();
+            audioRef.currentTime = 0;
+        }
     };
 
     return (
@@ -69,7 +97,9 @@ const ChatContainer = ({ messages, isLoading, prompt, handleSubmit, setPrompt, d
                     <div className="flex-1 border-t border-gray-300"></div>
                 </div>
                 {messages.map((msg, index) => (
-                    <div key={index} className={`chat ${msg.tml ? 'chat-start' : 'chat-end'}`}>
+                    <div key={index}
+                        className={`chat ${msg.tml ? 'chat-start' : 'chat-end'} ${index === currentSpeakingIndex ? 'message-speaking' : ''}`}
+                        onClick={() => handleSpeakClick(index)}>
                         {msg.user && <div className="text-white chat-bubble chat-bubble-primary overflow-scroll">{msg.user}</div>}
                         {msg.tml && (
                             <div className="bg-gray-100 text-gray-500 shadow-md chat-bubble">
@@ -86,13 +116,21 @@ const ChatContainer = ({ messages, isLoading, prompt, handleSubmit, setPrompt, d
                         )}
                     </div>
                 ))}
+                <TextToSpeech
+                    textToSpeak={currentSpeakingIndex !== null ? messages[currentSpeakingIndex].tml : ''}
+                    isSpeaking={isSpeaking}
+                    onAudioUrlChange={setCurrentAudioUrl}
+                />
+
+                {/* สร้าง audio element */}
+                <audio ref={ref => setAudioRef(ref)} src={currentAudioUrl} controls autoPlay className='hidden' />
                 {isLoadingImage && (
                     <div className="flex items-center justify-center h-12 w-12 rounded-full border-4 border-t-transparent border-blue-500 animate-spin"></div>
                 )}
                 {!isLoadingImage && base64Image && (
                     <div className='chat chat-end'>
                         <div className="text-white chat-bubble chat-bubble-primary overflow-scroll">
-                            <img src={base64Image} alt="Upload success" />
+                            <img src={showImage} alt="Upload success" />
                         </div>
                     </div>
                 )}

@@ -1,11 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import Navbar from './components/Navbar';
-import Login from './components/Login';
 import { useStore } from './store';
 import "./App.css";
-import Notification from './components/Notification';
 import ChatContainer from './components/ChatContainer';
 import { getApiUrl } from './lib/utils'
+import Layout from './components/Layout';
 
 function App() {
     const [error, setError] = useState(null);
@@ -79,6 +77,7 @@ function App() {
 
             const apiResponse = await fetch(url, {
                 method: 'POST',
+                credentials: 'include',
                 body: formData
             });
 
@@ -101,44 +100,30 @@ function App() {
 
 
     const displayUsername = () => {
-        const username = currentUser?.email;
-        if (!username) {
+        const name = currentUser?.name;
+        if (!name) {
             return <p>กำลังโหลดชื่อผู้ใช้...</p>;
+        } else {
+            return name
         }
-        const regex = /^(.*?)@gmail.com$/;
-        const match = username.match(regex);
-        return match ? match[1] : <p>รูปแบบอีเมลไม่ถูกต้อง</p>;
     };
 
     return (
-        <div className="flex flex-col h-screen w-screen overflow-scroll bg-[#0e0e0f]">
-            <Navbar />
-            <div className="flex h-full overflow-scroll">
-                <div className="flex-1">
-                    <div className="container mx-auto p-4 h-full">
-                        {currentUser ? (
-                            <ChatContainer
-                                messages={messages}
-                                isLoading={isLoading}
-                                prompt={prompt}
-                                handleSubmit={handleSubmit}
-                                setPrompt={setPrompt}
-                                displayUsername={displayUsername}
-                                endRef={endRef}
-                                error={error}
-                                setShowImage={setShowImage}
-                                base64Image={base64Image}
-                                setBase64Image={setBase64Image}
-                            />
-                        ) : (
-                            <Login />
-                        )}
-                    </div>
-                </div>
-            </div>
-            <Notification />
-            {error && <Notification message={error} />}
-        </div>
+        <Layout>
+            <ChatContainer
+                messages={messages}
+                isLoading={isLoading}
+                prompt={prompt}
+                handleSubmit={handleSubmit}
+                setPrompt={setPrompt}
+                displayUsername={displayUsername}
+                endRef={endRef}
+                error={error}
+                setShowImage={setShowImage}
+                base64Image={base64Image}
+                setBase64Image={setBase64Image}
+            />
+        </Layout>
     );
 }
 

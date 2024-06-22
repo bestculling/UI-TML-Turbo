@@ -1,0 +1,19 @@
+/* ในไฟล์ CSS ของคุณ */
+.message-speaking {
+    animation: speakingAnimation 1s infinite;
+    /* ปรับแต่ง animation ตามต้องการ */
+}
+
+@keyframes speakingAnimation {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}

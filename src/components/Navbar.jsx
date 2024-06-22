@@ -9,9 +9,11 @@ import { IoMenu } from "react-icons/io5";
 import { FaFilePdf } from "react-icons/fa6";
 import { FaFileUpload } from "react-icons/fa";
 import { FaBook } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
   const { currentUser } = useStore();
+  const navigate = useNavigate();
   const signout = useStore((state) => state.signout);
 
   const handleSignOut = async () => {
@@ -19,6 +21,7 @@ export default function Navbar() {
     try {
       await fetch(url);
       signout();
+      navigate('/login');
       toast.error('คุณออกจากระบบแล้ว!');
     } catch (error) {
       console.log(error);
@@ -52,6 +55,10 @@ export default function Navbar() {
     }
   };
 
+  const sendToUpdate = () => {
+    navigate('/update');
+  }
+
   return (
     <div className='drawer z-10 w-full p-3 shadow overflow-hidden flex justify-between items-center'>
       <div className='flex'>
@@ -83,12 +90,12 @@ export default function Navbar() {
               <MenuItem><span className='text-white'>เมนู</span></MenuItem>
               <div className='h-full flex flex-col justify-between'>
                 <div className="w-full">
-                  <MenuItem icon={IoIosChatboxes}>แชทกับ AI</MenuItem>
+                  <MenuItem icon={IoIosChatboxes} onClick={() => navigate('/')}>แชทกับ AI</MenuItem>
                   {/* <MenuItem icon={FaFilePdf}>สรุปเอกสาร PDF</MenuItem>
                   <MenuItem icon={FaFileUpload}>ไฟล์ upload</MenuItem> */}
                 </div>
                 <div>
-                <MenuItem icon={FaBook}>
+                  <MenuItem icon={FaBook} onClick={sendToUpdate}>
                     อัพเดต
                   </MenuItem>
                   <MenuItem icon={MdLogout} onClick={handleSignOut}>

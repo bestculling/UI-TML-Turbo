@@ -77,7 +77,6 @@ function App() {
 
             const apiResponse = await fetch(url, {
                 method: 'POST',
-                credentials: 'include',
                 body: formData
             });
 

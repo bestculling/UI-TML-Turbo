@@ -66,8 +66,7 @@ const ChatContainer = ({ messages, isLoading, prompt, handleSubmit, setPrompt, d
         <div className='relative overflow-scroll'>
             <div className="mb-24 chat-container">
                 <div className='chat chat-start'>
-                    <div className="p-4 m-4 bg-gray-100 text-gray-500 shadow-md chat-bubble">
-                        {/*  ปรับแต่งข้อความต้อนรับให้ฮา  ✨ */}
+                    {/* <div className="p-4 m-4 bg-gray-100 text-gray-500 shadow-md chat-bubble">
                         สวัสดีครับ! 👋 ยินดีที่ได้รู้จัก{' '}
                         <span className='font-bold text-primary'>{displayUsername()}</span> {' '}
                         แหม.. บอกเลยว่าวันนี้คุณดูดีมากกกก! 🤩  เหมือนเพิ่งผ่านวงจร  Machine Learning  มาใหม่ๆ เลย 😉
@@ -75,7 +74,7 @@ const ChatContainer = ({ messages, isLoading, prompt, handleSubmit, setPrompt, d
                         <span className='font-bold text-secondary'>TLM AI</span> สุดฮา
                         พร้อมแล้วที่จะมอบความรู้ด้านเทคโนโลยี การเขียนโปรแกรม และแน่นอน! มุขตลกสุดฮาแบบไม่มีใครเกิน!  🎉
                         ว่าแต่วันนี้มีอะไรให้ผมรับใช้ครับ?  🤖
-                    </div>
+                    </div> */}
                 </div>
                 {
                     newArray.map((e, i) => (

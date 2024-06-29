@@ -5,7 +5,7 @@ function TextToSpeech({ textToSpeak, isSpeaking }) {
     const [audioUrl, setAudioUrl] = useState(null);
     const [error, setError] = useState(null);
 
-    const subscriptionKey = '9bf1e80ac27141909916671e8b65702c';
+    const subscriptionKey = import.meta.env.VITE_SPEECH;
     const region = 'eastus';
     const endpoint = `https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`;
 
